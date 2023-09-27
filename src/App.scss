@@ -1,0 +1,67 @@
+@for $i from 1 through 100 {
+  .w-#{$i} {
+    width: #{$i * 1%};
+  }
+  .m-#{$i} {
+    margin: #{$i}px;
+  }
+  .mt-#{$i} {
+    margin-top: #{$i}px;
+  }
+  .mb-#{$i} {
+    margin-bottom: #{$i}px;
+  }
+  .mr-#{$i} {
+    margin-right: #{$i}px;
+  }
+  .ml-#{$i} {
+    margin-left: #{$i}px;
+  }
+
+  .p-#{$i} {
+    padding: #{$i}px;
+  }
+  .pt-#{$i} {
+    padding-top: #{$i}px;
+  }
+  .pb-#{$i} {
+    padding-bottom: #{$i}px;
+  }
+  .pr-#{$i} {
+    padding-right: #{$i}px;
+  }
+  .pl-#{$i} {
+    padding-left: #{$i}px;
+  }
+  .br-#{$i} {
+    border-radius: #{$i}px;
+  }
+}
+.m-auto {
+  margin: auto;
+}
+.d-flex {
+  display: flex;
+}
+.d-block {
+  display: block;
+}
+.c-pointer {
+  cursor: pointer;
+}
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+}
+.card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+.fw-bold {
+  font-weight: bold;
+}
+.w-select {
+  width: calc(100% - 24px);
+}
+.border {
+  border: 1px solid #ccc;
+}
