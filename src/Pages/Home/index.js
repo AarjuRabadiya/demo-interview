@@ -1,281 +1,232 @@
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import EditIcon from "@mui/icons-material/Edit";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import FileCopyIcon from "@mui/icons-material/FileCopy";
-import DeleteIcon from "@mui/icons-material/Delete";
+import * as React from "react";
+import Box from "@mui/material/Box";
+import SwipeableDrawer from "@mui/material/SwipeableDrawer";
+import Button from "@mui/material/Button";
 import {
-  Box,
-  Button,
-  Chip,
-  Container,
-  Divider,
-  Modal,
-  Stack,
-  TextareaAutosize,
-  Typography,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  MenuItem,
+  OutlinedInput,
+  TextField,
+  Select,
+  Dialog,
+  DialogActions,
+  DialogTitle,
 } from "@mui/material";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import Select from "react-select";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 300,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-  textAlign: "center",
-};
+export default function Home() {
+  const [state, setState] = React.useState({
+    right: false,
+  });
+  const [alert, setAlert] = React.useState(false);
+  const [selectedObj, setSelectedObj] = React.useState();
+  const [array, setArray] = React.useState([
+    {
+      branchName: "",
+      segmant: [
+        {
+          address: "",
+          state: "",
+          city: "",
+        },
+      ],
+    },
+  ]);
 
-const Home = () => {
-  const route = useLocation();
-  const navigate = useNavigate();
-  const pathName = route.pathname;
-  const [selected, setSelected] = useState("1");
-  const [open, isOpen] = useState(false);
-  return (
-    <Container maxWidth="sm">
-      <Box display={"flex"} alignItems={"center"} className="mt-10 mb-20">
-        {pathName.includes("edit") && (
-          <ArrowBackIosIcon
-            fontSize="20"
-            onClick={() => {
-              navigate(-1);
-            }}
-            className="c-pointer"
-          />
-        )}
-        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-          My Bio
-        </Typography>
+  const toggleDrawer = (anchor, open) => (event) => {
+    if (
+      event &&
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+
+    setState({ ...state, [anchor]: open });
+  };
+  const addSegment = (branchIndex) => {
+    const data =
+      array[branchIndex].segmant[array[branchIndex].segmant.length - 1];
+    // const isOpen = data.address !== "" && data.state !== "" && data.city !== "";
+    // if (isOpen) {
+    setArray((prevData) => {
+      const newData = [...prevData];
+      const newSegment = {
+        address: "",
+        state: "",
+        city: "",
+      };
+      newData[branchIndex].segmant.push(newSegment);
+      return newData;
+    });
+    // }
+  };
+  const deleteBranch = () => {
+    const newArr = array.filter((_, index) => index !== selectedObj);
+    setArray(newArr);
+    setAlert(false);
+  };
+  const onBranchName = (e, key) => {
+    array[key].branchName = e.target.value;
+    setArray(array);
+  };
+  const list = (anchor) => (
+    <Box sx={{ width: 550 }} role="presentation">
+      <Box onClick={toggleDrawer(anchor, false)} marginBottom={5}>
+        close
       </Box>
-      <Box className="mb-10">
-        {pathName.includes("edit") ? (
-          <>
-            <Box sx={{ fontWeight: 500 }}>Write something about youself?</Box>
+      <Dialog
+        open={alert}
+        onClose={() => setAlert(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Are you sure?</DialogTitle>
 
-            <TextareaAutosize
-              minRows={3}
-              placeholder="Write something about you"
-              className="w-select br-10 p-10 mt-4"
-              defaultValue="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-    ut labore et dolore magna aliqua."
-            />
-          </>
-        ) : (
-          <>
-            <Box
-              display={"flex"}
-              alignItems={"center"}
-              justifyContent={"space-between"}
-            >
-              <Box className="fw-bold">About Me </Box>
-              <EditIcon
-                fontSize="20"
-                className="c-pointer"
-                onClick={() => {
-                  navigate("/edit");
-                }}
-              />
-            </Box>
-            <Box className="p-10">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </Box>
-            {/* <Box className="p-10" textAlign={"center"} color={"#ccc"}>
-              No about me added yet
-            </Box> */}
-          </>
-        )}
-
-        <Divider />
-      </Box>
-      {pathName.includes("edit") && (
-        <>
-          <Box
-            className="mb-10 c-pointer"
-            display={"flex"}
-            alignItems={"center"}
-            justifyContent={"space-between"}
-          >
-            <input type="file" />
-            <DeleteIcon
-              fontSize="20"
-              sx={{ fill: "red" }}
-              onClick={() => {
-                isOpen(true);
-              }}
-            />
-          </Box>
-        </>
-      )}
-      <Box className="mb-20">
-        {pathName.includes("edit") ? (
-          <>
-            <Box className="mb-5" color="#5b5757" fontSize={18}>
-              Blood group
-            </Box>
-            <Select
-              value={selected}
-              onChange={(option) => {
-                setSelected(option);
-              }}
-              options={[
-                { value: "1", label: "1" },
-                { value: "2", label: "2" },
-                { value: "3", label: "3" },
-              ]}
-              className="w-100"
-            />
-          </>
-        ) : (
-          <>
-            <Box
-              display={"flex"}
-              justifyContent={"space-between"}
-              alignItems={"center"}
-            >
-              <Box className="fw-bold">Blood group</Box>
-              {/* AB+{" "} */}
-              <Box
-                className="c-pointer"
-                onClick={() => {
-                  navigate("/edit");
-                }}
-              >
-                Select
-              </Box>
-            </Box>
-          </>
-        )}
-      </Box>
-      {!pathName.includes("edit") && (
-        <>
-          <Box className="mb-20">
-            <Box
-              display={"flex"}
-              alignItems={"center"}
-              justifyContent={"space-between"}
-              className="card p-10 br-5 c-pointer"
-            >
-              <Box display={"flex"} alignItems={"center"}>
-                <FileCopyIcon fontSize="20" />
-                <Box sx={{ fontWeight: 500 }} className="ml-5">
-                  Resume
-                </Box>
-              </Box>
-              <ArrowForwardIosIcon
-                fontSize="20"
-                onClick={() => {
-                  navigate("/edit");
-                }}
-              />
-            </Box>
-          </Box>
-          <Divider />
-        </>
-      )}
-      {pathName.includes("edit") && (
-        <Box position={"absolute"} bottom={"10px"} left={"50%"} right={"50%"}>
-          <Button variant="contained" color="error">
-            Save
+        <DialogActions>
+          <Button onClick={() => setAlert(false)}>Cancle</Button>
+          <Button onClick={() => deleteBranch()} autoFocus>
+            Yes
           </Button>
-        </Box>
-      )}
-      <>
-        {/* <Box className="p-10 mb-10" textAlign={"center"}>
-          <Box color={"#ccc"}>  No soft skills added yet </Box>
-        </Box> */}
-        {!pathName.includes("edit") && (
-          <Box className="mt-10 mb-10">
-            <Box
-              display={"flex"}
-              alignItems={"center"}
-              justifyContent={"space-between"}
-              className="p-10"
-            >
-              <Box>Soft Skills</Box>
-              <EditIcon
-                fontSize="20"
-                className="c-pointer"
-                onClick={() => {
-                  navigate("/skill");
-                }}
-              />
-            </Box>
-            <Box className="mb-10">
-              I am incredible at these skills/professionally great at
-            </Box>
-            <Box className="mb-10">
-              <Stack direction="row" flexWrap={"wrap"} spacing={1}>
-                <Chip label="photoshop" color="primary" />
-                <Chip label="sketch" color="primary" />
-                <Chip label="Figma" color="primary" />
-                <Chip label="c+" color="primary" />
-                <Chip label="React" color="primary" />
-                <Chip label="flutter" color="primary" />
-                <Chip label="vue" color="primary" />
-                <Chip label="Figma" color="primary" />
-                <Chip label="c+" color="primary" />
-                <Chip label="React" color="primary" />
-                <Chip label="flutter" color="primary" />
-                <Chip label="vue" color="primary" />
-              </Stack>
-            </Box>
-            <Divider />
-            <Box className="mb-10 mt-5">Hobbies i am passionate about</Box>
-            <Box className="mb-10">
-              <Stack direction="row" flexWrap={"wrap"} spacing={1}>
-                <Chip label="photoshop" color="primary" />
-                <Chip label="sketch" color="primary" />
-                <Chip label="Figma" color="primary" />
-              </Stack>
-            </Box>
-            <Divider />
-            <Box className="mb-10 mt-5">My favourite subject are</Box>
-            <Box className="mb-10">
-              <Stack direction="row" flexWrap={"wrap"} spacing={1}>
-                <Chip label="photoshop" color="primary" />
-                <Chip label="sketch" color="primary" />
-                <Chip label="Figma" color="primary" />
-              </Stack>
-            </Box>
-          </Box>
-        )}
-        <Divider />
-      </>
-      {pathName.includes("edit") && open && (
-        <Modal
-          open={open}
-          onClose={() => isOpen(false)}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Box sx={style}>
-            <DeleteIcon sx={{ fill: "red", fontSize: "5rem" }} />
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-              Are you sure you want to delete resume?
-            </Typography>
-            <Box className="mt-20">
-              <Button
-                variant="outlined"
-                sx={{ marginRight: "5px" }}
-                onClick={() => isOpen(false)}
+        </DialogActions>
+      </Dialog>
+      {array &&
+        array.map((obj, key) => {
+          return (
+            <Accordion key={key}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
               >
-                Cancel
-              </Button>
-              <Button variant="contained" color="error">
-                Delete
-              </Button>
-            </Box>
-          </Box>
-        </Modal>
-      )}
-    </Container>
-  );
-};
+                <TextField
+                  fullWidth
+                  hiddenLabel
+                  id="filled-hidden-label-small"
+                  variant="filled"
+                  size="small"
+                  // value={obj.branchName}
+                  onChange={(e) => {
+                    onBranchName(e, key);
+                  }}
+                />
+                <Button
+                  onClick={() => {
+                    setAlert(true);
+                    setSelectedObj(key);
+                  }}
+                >
+                  Delete
+                </Button>
+              </AccordionSummary>
+              <AccordionDetails>
+                {obj.segmant &&
+                  obj.segmant.map((obj1, key1) => {
+                    return (
+                      <Box
+                        key={key1}
+                        marginBottom={2}
+                        alignItems={"center"}
+                        display={"flex"}
+                      >
+                        <Select
+                          displayEmpty
+                          value={obj1?.address || ""}
+                          onChange={(e) => {
+                            array[key].segmant[key].address = e.target.value;
+                            setArray(array);
+                          }}
+                          input={<OutlinedInput />}
+                          inputProps={{ "aria-label": "Without label" }}
+                          size="small"
+                          sx={{ width: "160px", marginRight: "5px" }}
+                        >
+                          <MenuItem disabled value="">
+                            <em>Select address</em>
+                          </MenuItem>
 
-export default Home;
+                          <MenuItem value={"Address1"}>Address1</MenuItem>
+                          <MenuItem value={"Address2"}>Address2</MenuItem>
+                          <MenuItem value={"Address3"}>Address3</MenuItem>
+                        </Select>
+                        <Select
+                          displayEmpty
+                          value={obj1.state || ""}
+                          onChange={(e) => {
+                            array[key].segmant[key].state = e.target.value;
+                            setArray(array);
+                          }}
+                          input={<OutlinedInput />}
+                          inputProps={{ "aria-label": "Without label" }}
+                          size="small"
+                          sx={{ width: "140px", marginRight: "5px" }}
+                        >
+                          <MenuItem disabled value="">
+                            <em>Select state</em>
+                          </MenuItem>
+
+                          <MenuItem value={"state1"}>state1</MenuItem>
+                          <MenuItem value={"state2"}>state2</MenuItem>
+                          <MenuItem value={"state3"}>state3</MenuItem>
+                        </Select>
+                        <TextField
+                          id="filled-hidden-label-small"
+                          variant="filled"
+                          size="small"
+                          // value={obj1.city || ""}
+                          onChange={(e) => {
+                            array[key].segmant[key].city = e.target.value;
+                            setArray(array);
+                          }}
+                          sx={{ width: "150px" }}
+                        />
+                      </Box>
+                    );
+                  })}
+                <Button onClick={() => addSegment(key)}>Add Segment</Button>
+              </AccordionDetails>
+            </Accordion>
+          );
+        })}
+      <Button
+        onClick={() => {
+          setArray([
+            ...array,
+            {
+              branchName: "",
+              segmant: [
+                {
+                  address: "",
+                  state: "",
+                  city: "",
+                },
+              ],
+            },
+          ]);
+        }}
+      >
+        Add Branch
+      </Button>
+    </Box>
+  );
+
+  return (
+    <div>
+      {["right"].map((anchor) => (
+        <React.Fragment key={anchor}>
+          <Button onClick={toggleDrawer(anchor, true)}>{anchor}</Button>
+          <SwipeableDrawer
+            anchor={anchor}
+            open={state[anchor]}
+            onClose={toggleDrawer(anchor, false)}
+            onOpen={toggleDrawer(anchor, true)}
+          >
+            {list(anchor)}
+          </SwipeableDrawer>
+        </React.Fragment>
+      ))}
+    </div>
+  );
+}
